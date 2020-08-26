@@ -1,2 +1,3 @@
 PyInquirer
 pdfkit
+prettytable
