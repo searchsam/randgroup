@@ -1,0 +1,45 @@
+#ayuda {
+  font-size: .8rem;
+  margin-bottom: 1.5rem;
+  margin-top: -30px;
+}
+
+#generar {
+  font-size: 0.8rem;
+  font-weight: bold;
+}
+
+#mensaje {
+  text-align: center;
+}
+
+#cantidad {
+  font-size: 1rem;
+  height: 3rem;
+  text-align: center;
+}
+
+.center-text {
+  text-align: center;
+}
+
+.error {
+  color: red;
+}
+
+.heading {
+  margin-bottom: 1rem;
+  margin-top: 5rem;
+}
+
+.subtitle {
+  margin-top: -2rem;
+}
+
+.success {
+  color: green;
+}
+
+textarea {
+  width: 100%;
+}

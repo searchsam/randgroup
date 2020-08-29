@@ -1,0 +1,46 @@
+{
+  "name": "randgroup",
+  "version": "1.0.0",
+  "description": "Crear grupos al azar para la comunidad.",
+  "author": "searchsam",
+  "license": "MIT",
+  "scripts": {
+    "start": "babel-node server/server.js",
+    "open:src": "babel-node server/server.js",
+    "clean-dist": "rimraf client/dist",
+    "prebuild": "npm-run-all clean-dist",
+    "build": "babel-node server/build.js",
+    "postbuild": "babel-node server/distServer.js",
+    "predeploy": "rimraf docs",
+    "deploy": "cp -r client/dist docs",
+    "postdeploy": "sh server/genin.sh"
+  },
+  "dependencies": {
+    "blob-stream": "^0.1.3",
+    "pdfkit": "^0.11.0"
+  },
+  "devDependencies": {
+    "@babel/cli": "7.8.4",
+    "@babel/core": "^7.11.4",
+    "@babel/node": "^7.10.5",
+    "@babel/preset-env": "^7.11.0",
+    "@babel/register": "^7.10.5",
+    "babel-loader": "^8.1.0",
+    "brfs": "^2.0.2",
+    "cors": "^2.8.5",
+    "css-loader": "^4.2.2",
+    "express": "^4.17.1",
+    "html-webpack-plugin": "^4.3.0",
+    "mini-css-extract-plugin": "^0.10.0",
+    "open": "^7.1.0",
+    "raw-loader": "^4.0.1",
+    "sass": "^1.26.10",
+    "sass-loader": "^10.0.1",
+    "style-loader": "^1.2.1",
+    "transform-loader": "^0.2.4",
+    "webpack": "^4.44.1",
+    "webpack-cli": "^3.3.12",
+    "webpack-dev-server": "^3.11.0",
+    "yarn-run-all": "^3.1.1"
+  }
+}

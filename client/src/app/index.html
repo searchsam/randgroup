@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="es">
+
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>randgroup</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/skeleton-framework/1.1.1/skeleton.min.css">
+  </head>
+
+  <body>
+    <div class="container">
+      <div class="center-text heading row">
+        <div class="column">
+          <h1>Creación de Grupos</h1>
+          <h5 class="subtitle">Descarge en pdf los grupos creados al azar.</h5>
+        </div>
+      </div>
+    </div>
+    <form id="formulario">
+      <div class="row">
+        <div class="column four"></div>
+        <div class="column four">
+          <input class="u-full-width" type="number" placeholder="Cantidad de Grupos" id="cantidad">
+        </div>
+      </div>
+      <div class="row">
+        <div class="column one"></div>
+        <div class="column five">
+          <textarea class="textarea" name="name" id="matrimonios" placeholder="Matrimonios"></textarea>
+          <p id="ayuda">Nombres separados por coma (,). Ejemplo: Pancrasio y Romualda,José y María,...</p>
+        </div>
+        <div class="column five">
+          <textarea class="textarea" name="name" id="solteros" placeholder="Solteros"></textarea>
+          <p id="ayuda">Nombres separados por coma (,). Ejemplo: Grabriel,Miguel,Rafael,...</p>
+        </div>
+        <div class="column one"></div>
+      </div>
+      <div class="row">
+        <div class="column four"></div>
+        <div class="column four">
+          <button class="u-full-width button-primary" type="submit" id="generar">Generar</button>
+        </div>
+      </div>
+    </form>
+    <div class="row">
+      <div class="column">
+        <p id="mensaje"></p>
+      </div>
+    </div>
+  </body>
+
+</html>
