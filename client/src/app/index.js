@@ -49,42 +49,12 @@ let setInputFilter = (textbox, inputFilter) => {
   });
 };
 
-let setTextFilter = (textbox, textAreaFilter) => {
-  [
-    "input",
-    "keydown",
-    "keyup",
-    "mousedown",
-    "mouseup",
-    "select",
-    "contextmenu",
-    "drop"
-  ].forEach(event => {
-    console.log(event);
-    textbox.addEventListener(event, () => {
-      if (textAreaFilter(textbox.textContent)) {
-        textbox.oldValue = textbox.textContent;
-        textbox.oldSelectionStart = textbox.selectionStart;
-        textbox.oldSelectionEnd = textbox.selectionEnd;
-      } else if (textbox.hasOwnProperty("oldValue")) {
-        textbox.textContent = textbox.oldValue;
-        textbox.setSelectionRange(
-          textbox.oldSelectionStart,
-          textbox.oldSelectionEnd
-        );
-      } else {
-        textbox.value = "";
-      }
-    });
-  });
-};
-
 setInputFilter(
   cantidad,
   value => /^\d*$/.test(value) && (value === "" || parseInt(value) < 10)
 );
-setTextFilter(matrimonios, textContent => /^[a-zA-Zñ]*$/i.test(textContent));
-setTextFilter(solteros, textContent => /^[a-zA-Zñ]*$/i.test(textContent));
+setInputFilter(matrimonios, value => /^[a-zA-Záéíóúñ,\s]*$/i.test(value));
+setInputFilter(solteros, value => /^[a-zA-Záéíóúñ,\s]*$/i.test(value));
 
 let loadTheme = (word, soup) => {
   doc
@@ -116,20 +86,19 @@ let downloadDoc = word => {
   });
 };
 
-let main = cgrupos => {
-  console.log(cgrupos);
-  // let matrimonios = document.getElementById("cantidad");
-  // let mensaje = document.getElementById("mensaje");
-  // let solteros = document.getElementById("cantidad");
-  //
-  // if (cantidad.split(" ").length > 1 || word == "") {
-  //   mensaje.classList.add("error");
-  //   mensaje.textContent = "Palabra no valida.";
-  //   return;
-  // }
-  //
-  // let url = `https://hjg.com.ar/vocbib/art/${word.toLowerCase()}.html`;
-  //
+let main = (cantidad = 4, matrimonios, solteros) => {
+  let mensaje = document.getElementById("mensaje");
+  let matrimoniosStatus = !matrimonios.length && !matrimonios.includes(",");
+  let solterosStatus = !solteros.length && !solteros.includes(",");
+  
+  if (solterosStatus || matrimoniosStatus) {
+    mensaje.classList.add("error");
+    mensaje.textContent =
+      "El campo de Matrimonios o Solteros, al menos uno de los dos es requerido.";
+    // alert("El campo de Matrimonios o Solteros, al menos uno de los dos es requerido.");
+    return;
+  }
+
   // if (topicExists(url)) {
   //   mensaje.classList.add("success");
   //   mensaje.textContent = "Palabra encontrada.";
@@ -150,11 +119,10 @@ let main = cgrupos => {
 
 document.getElementById("generar").addEventListener("click", event => {
   event.preventDefault();
-  console.log(matrimonios.textContent);
-  main(cantidad.value);
+  main(cantidad.value, matrimonios.value, solteros.value);
 });
 
 document.getElementById("formulario").addEventListener("submit", event => {
   event.preventDefault();
-  main(cantidad.value);
+  main(cantidad.value, matrimonios.value, solteros.value);
 });
