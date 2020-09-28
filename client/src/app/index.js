@@ -56,20 +56,61 @@ setInputFilter(
 setInputFilter(matrimonios, value => /^[a-zA-Záéíóúñ,\s]*$/i.test(value));
 setInputFilter(solteros, value => /^[a-zA-Záéíóúñ,\s]*$/i.test(value));
 
-let loadTheme = (word, soup) => {
-  doc
-    .fontSize(20)
-    .text(word.replace(word[0], word[0].toUpperCase()), {align: "center"});
+let loadGroups = (cantidad, matrimonios, solteros) => {
+  let order = {};
+  let i = 1;
+  for (i = 1; i <= cantidad; i++) {
+    order[i] = {};
+  }
+
+  let soup = matrimonios.split(",").concat(solteros.split(","));
+  i = 1;
+  soup.forEach(name => {
+    order[i].push(name.trim());
+    i++;
+    if (i > 4) {
+      i = 1;
+    }
+  });
+
+  let total = 0;
+  for (i = 1; i <= cantidad; i++) {
+    if (order[i].length > total) total = order[i].length;
+  }
+
+  doc.fontSize(20).text("Grupos", {align: "center"});
   doc.fontSize(11);
-  soup
-    .find("div", {id: "main"})
-    .findAll("p")
-    .forEach(p => {
-      doc.moveDown().text(p.text.replace(/(\r\n|\n|\r)/gm, " "), {
-        align: "justify",
-        ellipsis: true
-      });
-    });
+  for (i = 0; i < cantidad; i++) {
+    doc.text(`Grupo ${i + 1}`, 50 + 125 * i, 100);
+  }
+
+  let vspace = 120;
+  let iterator = 0;
+  for (const x of Array(total).keys()) {
+    for (i = 0; i < cantidad; i++) {
+      doc.text(order[i + 1][x], 50 + (125 * i), vspace + 20 * iterator)
+      i++;
+      if (i > 4) {
+        i = 1;
+      }
+    }
+
+    doc
+      .strokeColor("#aaaaaa")
+      .lineWidth(1)
+      .moveTo(50, vspace + 15 + 20 * iterator)
+      .lineTo(550, vspace + 15 + 20 * iterator)
+      .stroke();
+
+    iterator++;
+    if (x == 30 || x == 64) {
+      doc.addPage();
+      vspace = 50;
+      iterator = 0;
+    }
+  }
+
+  doc.end();
 };
 
 let downloadDoc = word => {
@@ -90,7 +131,15 @@ let main = (cantidad = 4, matrimonios, solteros) => {
   let mensaje = document.getElementById("mensaje");
   let matrimoniosStatus = !matrimonios.length && !matrimonios.includes(",");
   let solterosStatus = !solteros.length && !solteros.includes(",");
-  
+
+  if (!cantidad.length) {
+    mensaje.classList.add("error");
+    mensaje.textContent =
+      "El campo Cantidad esta vacio, se usara 4 como valor por defecto.";
+    // alert("El campo Cantidad esta vacio, se usara 4 como valor por defecto.");
+    return;
+  }
+
   if (solterosStatus || matrimoniosStatus) {
     mensaje.classList.add("error");
     mensaje.textContent =
@@ -99,22 +148,8 @@ let main = (cantidad = 4, matrimonios, solteros) => {
     return;
   }
 
-  // if (topicExists(url)) {
-  //   mensaje.classList.add("success");
-  //   mensaje.textContent = "Palabra encontrada.";
-  //   alert("Palabra encontrada.");
-  //   let soup = getTheme(url);
-  //   loadTheme(word, soup);
-  //   // downloadDoc(word);
-  //   loadReadings(word, soup);
-  //   downloadDoc(word);
-  //   window.location.reload(false);
-  // } else {
-  //   mensaje.classList.add("error");
-  //   mensaje.textContent = "Palabra no encontrada.";
-  //   alert("Palabra no encontrada.");
-  //   return;
-  // }
+  loadGroups(cantidad, matrimonios, solteros);
+  downloadDoc();
 };
 
 document.getElementById("generar").addEventListener("click", event => {
