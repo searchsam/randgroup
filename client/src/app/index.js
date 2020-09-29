@@ -9,7 +9,7 @@ fs.writeFileSync("data/Helvetica.afm", Helvetica);
 const blobStream = require("blob-stream");
 const PDFDocument = require("pdfkit").default;
 
-const doc = new PDFDocument({size: "LETTER", margin: 50});
+const doc = new PDFDocument({size: "LETTER", layout: "landscape", margin: 50});
 const stream = doc.pipe(blobStream());
 const a = document.createElement("a");
 
@@ -49,6 +49,26 @@ let setInputFilter = (textbox, inputFilter) => {
   });
 };
 
+let shuffle = array => {
+  var currentIndex = array.length,
+    temporaryValue,
+    randomIndex;
+
+  // While there remain elements to shuffle...
+  while (0 !== currentIndex) {
+    // Pick a remaining element...
+    randomIndex = Math.floor(Math.random() * currentIndex);
+    currentIndex -= 1;
+
+    // And swap it with the current element.
+    temporaryValue = array[currentIndex];
+    array[currentIndex] = array[randomIndex];
+    array[randomIndex] = temporaryValue;
+  }
+
+  return array;
+};
+
 setInputFilter(
   cantidad,
   value => /^\d*$/.test(value) && (value === "" || parseInt(value) < 10)
@@ -59,16 +79,20 @@ setInputFilter(solteros, value => /^[a-zA-Záéíóúñ,\s]*$/i.test(value));
 let loadGroups = (cantidad, matrimonios, solteros) => {
   let order = {};
   let i = 1;
+
   for (i = 1; i <= cantidad; i++) {
-    order[i] = {};
+    order[i] = [];
   }
 
-  let soup = matrimonios.split(",").concat(solteros.split(","));
+  let soup = shuffle(matrimonios.split(",")).concat(
+    shuffle(solteros.split(","))
+  );
+
   i = 1;
   soup.forEach(name => {
     order[i].push(name.trim());
     i++;
-    if (i > 4) {
+    if (i > cantidad) {
       i = 1;
     }
   });
@@ -83,16 +107,18 @@ let loadGroups = (cantidad, matrimonios, solteros) => {
   for (i = 0; i < cantidad; i++) {
     doc.text(`Grupo ${i + 1}`, 50 + 125 * i, 100);
   }
+  doc
+    .strokeColor("#aaaaaa")
+    .lineWidth(1)
+    .moveTo(50, 115)
+    .lineTo(650, 115)
+    .stroke();
 
   let vspace = 120;
   let iterator = 0;
   for (const x of Array(total).keys()) {
     for (i = 0; i < cantidad; i++) {
-      doc.text(order[i + 1][x], 50 + (125 * i), vspace + 20 * iterator)
-      i++;
-      if (i > 4) {
-        i = 1;
-      }
+      doc.text(order[i + 1][x], 50 + 125 * i, vspace + 20 * iterator);
     }
 
     doc
@@ -113,7 +139,7 @@ let loadGroups = (cantidad, matrimonios, solteros) => {
   doc.end();
 };
 
-let downloadDoc = word => {
+let downloadDoc = () => {
   stream.on("finish", () => {
     let blob = stream.toBlob("application/pdf");
 
@@ -121,7 +147,7 @@ let downloadDoc = word => {
 
     let docUrl = window.URL.createObjectURL(blob);
     a.href = docUrl;
-    a.download = `${word.toLowerCase()}.pdf`;
+    a.download = "grupos.pdf";
     a.click();
     window.URL.revokeObjectURL(docUrl);
   });
@@ -137,7 +163,11 @@ let main = (cantidad = 4, matrimonios, solteros) => {
     mensaje.textContent =
       "El campo Cantidad esta vacio, se usara 4 como valor por defecto.";
     // alert("El campo Cantidad esta vacio, se usara 4 como valor por defecto.");
-    return;
+    cantidad = 4;
+  } else if (cantidad < 3 || cantidad > 5) {
+    mensaje.classList.add("error");
+    mensaje.textContent =
+      "El campo Cantidad no puede ser menor a 3 o mayor a 5.";
   }
 
   if (solterosStatus || matrimoniosStatus) {
@@ -150,6 +180,8 @@ let main = (cantidad = 4, matrimonios, solteros) => {
 
   loadGroups(cantidad, matrimonios, solteros);
   downloadDoc();
+
+  window.location.reload(false);
 };
 
 document.getElementById("generar").addEventListener("click", event => {
